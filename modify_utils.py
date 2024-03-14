@@ -24,6 +24,11 @@ def modify_method_of_instance(instance, target_class_name, target_method_name, n
     # Add the instance to the already_visited set
     visited_instances.add(instance_id)
 
+    print(f"Modifying method of instance {instance.__class__.__name__}")
+    print(f"Target class name: {target_class_name}")
+    print(f"Target method name: {target_method_name}")
+    print(f"New method: {new_method}")
+
     # Check if this instance is of the target class
     if instance.__class__.__name__ == target_class_name:
         bond_method = MethodType(new_method, instance) 

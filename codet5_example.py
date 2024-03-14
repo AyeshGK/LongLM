@@ -12,11 +12,11 @@ from codet5_self_extend_patch import CustomCodeT5Model
 # original_llama_forward = LlamaAttention.forward
 
 original_t5_forward = T5Model.forward
-self_extend_forward = partial(CustomCodeT5Model.self_extend_forwar, group_size_1=8, group_size_2=1024)
+self_extend_forward = partial(CustomCodeT5Model.self_extend_forward, group_size_1=8, group_size_2=1024)
 
 
 # model_path = 'meta-llama/Llama-2-7b-chat-hf'
-model_checkpoint = 'codet5-base'
+model_checkpoint = 'Salesforce/codet5-small'
 # model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint)
 tokenizer = tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
@@ -28,10 +28,13 @@ model.eval()
 
 prompt = "def foo(x):\n    return x + 1\n\nprint(foo(2))"
 input_ids = tokenizer(prompt, return_tensors="pt").input_ids
+print("Prompt:", prompt)
+print("input_ids:", input_ids)
 print( "-----------------------------------" )
 
-modify_method_of_instance(model, "T5Model", "forward", original_t5_forward)
+modify_method_of_instance(model, "T5ForConditionalGeneration", "forward", original_t5_forward)
 tokens = model.generate(input_ids, max_new_tokens=6)
+print("tokens:", tokens)    
 answer= "Original:  [" + tokenizer.decode(tokens[0].tolist()[input_ids.shape[1]:], skip_special_tokens=True)  + "]"
 answer = answer.replace("\n", "\\n")
 print( answer )

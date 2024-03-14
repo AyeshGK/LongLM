@@ -1,7 +1,9 @@
+from typing import Optional, Tuple
 import torch
 import torch.nn as nn
 import math
-from transformers import CodeT5Model, CodeT5Config
+# from transformers import CodeT5Model, CodeT5Config
+import transformers 
 
 def repeat_kv(hidden_states: torch.Tensor, n_rep: int) -> torch.Tensor:
     """
@@ -44,7 +46,7 @@ def apply_grouped_rotary_pos_emb(q, k, cos, sin, position_ids, g_size_1=8, g_siz
     k_embed = (k * cos_k) + (rotate_half(k) * sin_k) 
     return q_embed, k_embed
 
-class CustomCodeT5Model(CodeT5Model):
+class CustomCodeT5Model(transformers.T5ForConditionalGeneration):
     def __init__(self, config):
         super().__init__(config)
         
@@ -168,8 +170,4 @@ class CustomCodeT5Model(CodeT5Model):
 
         return attn_output, attn_weights, past_key_value
 
-# Example usage:
-config = CodeT5Config.from_pretrained("microsoft/codebert-base")
-model = CustomCodeT5Model(config)
-input_ids = torch.tensor([[1, 2, 3, 4, 5]])
-outputs = model(input_ids)
+
